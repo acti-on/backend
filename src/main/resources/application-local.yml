@@ -1,41 +1,37 @@
 spring:
-#  redis:
+  redis:
 #    host: ${REDIS_HOST}
-#    port: 6379
-#  cache:
-#    type: redis
-#    redis:
-#      time-to-live: 600 # 데이터 유지 시간(sec)
-#      cache-null-values: true # null 캐싱 여부
-#  h2:
-#    console:
-#      enabled: true
-#      path: /h2
-#      settings:
-#        web-allow-others: true
-#  sql:
-#    init:
-#      data-locations: classpath*:db/h2/data.sql
-#      encoding: UTF-8
-#  jpa:
-#    database: mysql   # mysql 설정
-#    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
-#    hibernate:
-#      ddl-auto: update
-#    show-sql: false
-#    properties:
-#      hibernate:
-#        connection:
-#          characterEncoding: UTF-8
-#          useUniCode: true
-#        format_sql: true  # SQL pretty print
-#        jdbc:
-#          time_zone: Asia/Seoul   # 서버 시간 서울로 변경
-#
-#  datasource:
-#      #url: jdbc:h2:mem:test
-#    driver-class-name: com.mysql.cj.jdbc.Driver   # RDS mysql 설정
-#    initialization-mode: always
+    host: localhost
+    port: 6379
+  cache:
+    type: redis
+    redis:
+      time-to-live: 600 # 데이터 유지 시간(sec)
+      cache-null-values: true # null 캐싱 여부
+  h2:
+    console:
+      enabled: true
+      path: /h2
+      settings:
+        web-allow-others: true
+  datasource:
+    url: jdbc:h2:mem:test
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        connection:
+          characterEncoding: UTF-8
+          useUniCode: true
+        format_sql: true  # SQL pretty print
+        jdbc:
+          time_zone: Asia/Seoul   # 서버 시간 서울로 변경
+  sql:
+    init:
+      data-locations: classpath*:db/h2/data.sql
+      encoding: UTF-8
   security:
     oauth2:
       client:
@@ -49,7 +45,7 @@ spring:
               - profile
               - email
   servlet:
-    multipart:    # 파일 업로드 관련 설정
+    multipart: # 파일 업로드 관련 설정
       enabled: true
       file-size-threshold: 2KB
       max-file-size: 100MB
