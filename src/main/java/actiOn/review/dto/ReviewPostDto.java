@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import org.hibernate.validator.constraints.Range;
 
+import javax.validation.constraints.NotNull;
+
 @Getter
 @Builder
 @AllArgsConstructor
@@ -14,6 +16,6 @@ public class ReviewPostDto {
     private String content;
 
     @Range(min = 0, max = 5)
-    @NotSpace
+    @NotNull
     private Integer rating;
 }
