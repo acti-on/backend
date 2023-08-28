@@ -90,6 +90,8 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
         String base64EncodedSecretKey = tokenProvider.encodedBase64SecretKey();
         Jws<Claims> claims = tokenProvider.getClaims(refreshToken, base64EncodedSecretKey);
 
+
+
         // 토큰 만료 검증
         if (tokenProvider.isExpired(claims)) {
             throw new Exception("리프레시 토큰이 만료되었습니다.");

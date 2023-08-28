@@ -69,7 +69,7 @@ public class TokenProvider {
     }
 
     // 액세스 토큰 생성
-    public String generateAccessToken(Map<String, Object> claims,
+    private String generateAccessToken(Map<String, Object> claims,
                                       String subject,
                                       Date expiration,
                                       String base64EncodedSecretKey) {
@@ -85,7 +85,7 @@ public class TokenProvider {
     }
 
     // 리프레시 토큰 생성
-    public String generateRefreshToken(String subject, Date expiration,
+    private String generateRefreshToken(String subject, Date expiration,
                                        String base64EncodedSecretKey) {
         Key key = getKeyFromBase64EncodedKey(base64EncodedSecretKey);
 
@@ -124,16 +124,16 @@ public class TokenProvider {
     }
 
     // signature 검증만 하는 메서드
-    public void verifySignature(String jws, String base64EncodedSecretKey) {
-        Key key = getKeyFromBase64EncodedKey(base64EncodedSecretKey);
+//    public void verifySignature(String jws, String base64EncodedSecretKey) {
+//        Key key = getKeyFromBase64EncodedKey(base64EncodedSecretKey);
+//
+//        Jwts.parserBuilder()
+//                .setSigningKey(key)
+//                .build()
+//                .parseClaimsJws(jws);
+//    }
 
-        Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(jws);
-    }
-
-    public Date getTokenExpiration(int expirationMinutes) {
+    private Date getTokenExpiration(int expirationMinutes) {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MINUTE, expirationMinutes);
 
