@@ -1,6 +1,7 @@
 package actiOn.auth.filter;
 
 import actiOn.auth.provider.TokenProvider;
+import actiOn.auth.refreshToken.service.RefreshTokenService;
 import actiOn.auth.utils.MemberAuthorityUtil;
 import actiOn.member.entity.Member;
 import actiOn.member.service.MemberService;
@@ -9,6 +10,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -39,6 +41,8 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
     private final MemberAuthorityUtil authorityUtil;
     private final MemberService memberService;
 
+    private final RefreshTokenService refreshTokenService;
+
     // 예외 로직 추가
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -68,6 +72,8 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
             Jws<Claims> claims = verifyRefreshToken(refreshToken);
 
             String email = claims.getBody().getSubject();
+
+
             Member member = memberService.findMemberByEmail(email);
 
             // 새로운 액세스 토큰 재발금
@@ -90,12 +96,14 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
         String base64EncodedSecretKey = tokenProvider.encodedBase64SecretKey();
         Jws<Claims> claims = tokenProvider.getClaims(refreshToken, base64EncodedSecretKey);
 
-
-
         // 토큰 만료 검증
         if (tokenProvider.isExpired(claims)) {
             throw new Exception("리프레시 토큰이 만료되었습니다.");
         }
+
+        //DB의 RefreshToken과 검증, 만약 관리자가 DB에서 Refresh 토큰을 삭제하면 이곳을 통과할 수 없기 때문에 보안이 강화된다.
+        String email = claims.getBody().getSubject();
+        refreshTokenService.verifyRefreshToken(email, refreshToken);
 
         return claims;
     }

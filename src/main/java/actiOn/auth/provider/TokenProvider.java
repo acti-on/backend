@@ -1,6 +1,8 @@
 package actiOn.auth.provider;
 
 import actiOn.auth.dto.LoginResponseDto;
+import actiOn.auth.refreshToken.entity.RefreshToken;
+import actiOn.auth.refreshToken.service.RefreshTokenService;
 import actiOn.helper.util.JsonUtil;
 import actiOn.member.entity.Member;
 import io.jsonwebtoken.Claims;
@@ -10,6 +12,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -26,7 +29,11 @@ import java.util.Map;
 import static actiOn.auth.utils.TokenPrefix.*;
 
 @Component
+@RequiredArgsConstructor
 public class TokenProvider {
+
+
+    private final RefreshTokenService refreshTokenService;
     @Getter
     @Value("${jwt.key}")
     private String secretKey;
@@ -65,7 +72,13 @@ public class TokenProvider {
         Date expiration = getTokenExpiration(refreshTokenExpirationMinutes);
         String base64EncodedSecretKey = encodedBase64SecretKey();
 
-        return generateRefreshToken(subject, expiration, base64EncodedSecretKey);
+        String refreshToken = generateRefreshToken(subject, expiration, base64EncodedSecretKey);
+
+        //refresh token 객체 생성 후 DB에 등록
+        RefreshToken generatedRefreshToken = new RefreshToken(subject,refreshToken,expiration);
+        refreshTokenService.refreshTokenRegistration(generatedRefreshToken);
+
+        return refreshToken;
     }
 
     // 액세스 토큰 생성

@@ -10,6 +10,7 @@ public enum ExceptionCode {
     PHONE_NUMBER_EXISTS(422, "member phone number exists"),
     MEMBER_NOT_AUTHORIZED(403, "Member not authorized"),
     PROFILE_IMAGE_NOT_FOUND(404, "Profile image not found"),
+    REFRESH_TOKEN_NOT_FOUND(404, "Refresh Token Not Found!"),
 
     // AUTH
     USERNAME_NOT_FOUND(404, "Username not found"),

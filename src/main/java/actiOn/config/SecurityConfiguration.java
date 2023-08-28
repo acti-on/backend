@@ -8,6 +8,7 @@ import actiOn.auth.handler.MemberAuthenticationFailureHandler;
 import actiOn.auth.handler.MemberAuthenticationSuccessHandler;
 import actiOn.auth.oauth2.OAuth2MemberSuccessHandler;
 import actiOn.auth.provider.TokenProvider;
+import actiOn.auth.refreshToken.service.RefreshTokenService;
 import actiOn.auth.role.RoleService;
 import actiOn.auth.utils.MemberAuthorityUtil;
 import actiOn.member.service.MemberService;
@@ -43,6 +44,8 @@ import static actiOn.config.AllowedOrigins.*;
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final TokenProvider tokenProvider;
     private final MemberAuthorityUtil authorityUtil;
+
+    private final RefreshTokenService refreshTokenService;
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
@@ -130,7 +133,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             jwtAuthenticationFilter.setAuthenticationSuccessHandler(new MemberAuthenticationSuccessHandler(tokenProvider));
             jwtAuthenticationFilter.setAuthenticationFailureHandler(new MemberAuthenticationFailureHandler());
 
-            JwtVerificationFilter jwtVerificationFilter = new JwtVerificationFilter(tokenProvider, authorityUtil, memberService);
+            JwtVerificationFilter jwtVerificationFilter = new JwtVerificationFilter(tokenProvider, authorityUtil, memberService, refreshTokenService);
 
             // Spring Security Filter Chain에 추가
             builder.addFilter(jwtAuthenticationFilter)
