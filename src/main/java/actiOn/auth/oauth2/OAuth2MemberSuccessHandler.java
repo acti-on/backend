@@ -4,6 +4,7 @@ import actiOn.auth.provider.TokenProvider;
 import actiOn.auth.role.MemberRole;
 import actiOn.auth.role.Role;
 import actiOn.auth.role.RoleService;
+import actiOn.config.OAuth2Configuration;
 import actiOn.member.entity.Member;
 import actiOn.member.service.MemberService;
 import lombok.AllArgsConstructor;
@@ -24,7 +25,7 @@ import java.security.SecureRandom;
 import java.util.List;
 
 import static actiOn.auth.utils.TokenPrefix.*;
-
+import static actiOn.config.OAuth2Configuration.*;
 // OAuth2 인증에 성공하면 호출되는 핸들러
 @Slf4j
 @AllArgsConstructor
@@ -119,10 +120,14 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
         // 컨트롤러로 보낸 후 프론트로 리다이렉트 시도
         return UriComponentsBuilder.newInstance()
                 // 프론트 도메인
-                .scheme("http")
-                .host("ac-ti-on.s3-website.ap-northeast-2.amazonaws.com") // s3 엔드포인트
-//                .port(5173)
-                .path("/oauth2/authorization/google/success")
+                .scheme(OAuth2Configuration.SCHEME.getValue())
+                .host(OAuth2Configuration.HOST.getValue())
+                .port(OAuth2Configuration.PORT.getValue())
+                .path(OAuth2Configuration.PATH.getValue())
+//                .scheme("http")
+//                .host("ac-ti-on.s3-website.ap-northeast-2.amazonaws.com") // s3 엔드포인트
+////                .port(5173)
+//                .path("/oauth2/authorization/google/success")
                 .queryParams(queryParams)
                 .build().toUri()
                 .toString();

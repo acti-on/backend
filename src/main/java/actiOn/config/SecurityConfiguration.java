@@ -32,10 +32,11 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import static actiOn.auth.utils.TokenPrefix.REFRESH;
 import static org.springframework.http.HttpMethod.*;
-
+import static actiOn.config.AllowedOrigins.*;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -73,9 +74,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .addLogoutHandler(((request, response, authentication) -> {
                     response.setHeader("Set-Cookie", REFRESH.getType() +
                             "=; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=0;");
-                    response.setHeader("Access-Control-Allow-Origin", "http://ac-ti-on.s3-website.ap-northeast-2.amazonaws.com");
+//                    response.setHeader("Access-Control-Allow-Origin", "http://ac-ti-on.s3-website.ap-northeast-2.amazonaws.com");
+                    response.setHeader("Access-Control-Allow-Origin", COOKIE_ALLOW_ORIGIN.getOrigin());
                 }))
-                .logoutSuccessUrl("http://ac-ti-on.s3-website.ap-northeast-2.amazonaws.com/home")
+                .logoutSuccessUrl(COOKIE_ALLOW_ORIGIN.getOrigin()+"/home")
 
                 .and()
                 .authorizeRequests(this::configureAuthorization)
@@ -142,14 +144,20 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
+//        configuration.setAllowedOrigins(
+//                Arrays.asList(
+//                        "http://localhost:3000",
+//                        "https://acti-on.netlify.app",
+//                        "http://localhost:5173",
+//                        "http://ec2-52-78-205-102.ap-northeast-2.compute.amazonaws.com:8080",
+//                        "http://ac-ti-on.s3-website.ap-northeast-2.amazonaws.com"
+//                )
+//        );
         configuration.setAllowedOrigins(
-                Arrays.asList(
-                        "http://localhost:3000",
-                        "https://acti-on.netlify.app",
-                        "http://localhost:5173",
-                        "http://ec2-52-78-205-102.ap-northeast-2.compute.amazonaws.com:8080",
-                        "http://ac-ti-on.s3-website.ap-northeast-2.amazonaws.com"
-                )
+                Arrays.stream(AllowedOrigins.values())
+                        .map(AllowedOrigins::getOrigin)
+                        .distinct()
+                        .collect(Collectors.toList())
         );
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(2000L);
