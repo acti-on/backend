@@ -2,8 +2,8 @@
 name: "\U0001F30A actiOn_fix_template"
 about: actiOn_fix issue template 입니다.
 title: "[기능]"
-labels: BACK_END, FRONT_END
-assignees: TaeWooKim-SCH, chen4023, isu-nice, kminvita, developer-DongWoo
+labels: ''
+assignees: ''
 
 ---
 
